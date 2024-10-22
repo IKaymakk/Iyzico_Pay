@@ -1,0 +1,22 @@
+﻿@model Iyzico_SanalPos.Models.PayViewModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Pay</title>
+</head>
+<body>
+    <h2>Ödeme İşlemi Başlatılıyor...</h2>
+
+    <!-- Iyzico'dan gelen HTML içeriğini burada gösteriyoruz -->
+    @Html.Raw(Model.HtmlContent)
+
+    <!-- Eğer kullanıcıyı bilgilendirmek isterseniz -->
+    <p>Lütfen 3D Secure sayfasına yönlendiriliyorsunuz, işleminizi tamamlayın.</p>
+</body>
+</html>
