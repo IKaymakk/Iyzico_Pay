@@ -1,0 +1,60 @@
+﻿@model Iyzico_SanalPos.Models.ThreedsCallbackModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ödeme Sonucu</title>
+
+    <!-- SweetAlert2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet" />
+</head>
+<body>
+    <h2>Ödeme Sonucu</h2>
+
+    <div id="result-container">
+        <p><strong>Ödeme Durumu:</strong> <span id="payment-status"></span></p>
+        <p><strong>Ödeme ID:</strong> <span id="payment-id"></span></p>
+        <p><strong>Conversation ID:</strong> <span id="conversation-id"></span></p>
+        <p><strong>MD Status:</strong> <span id="md-status"></span></p>
+    </div>
+
+    <!-- SweetAlert2 ve jQuery -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            var paymentStatus = '@Model.Status';
+            var paymentId = '@Model.PaymentId';
+            var conversationId = '@Model.ConversationId';
+            var mdStatus = '@Model.MdStatus';
+
+            // Ödeme durumu
+            $('#payment-status').text(paymentStatus === 'success' ? 'Başarılı' : 'Başarısız');
+            $('#payment-id').text(paymentId);
+            $('#conversation-id').text(conversationId);
+            $('#md-status').text(mdStatus);
+
+            // Eğer ödeme başarısızsa, hata mesajı gösterebiliriz
+            if (paymentStatus !== 'success') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Ödeme Başarısız!',
+                    text: 'Ödemeniz işleme alınamadı. Lütfen tekrar deneyin.',
+                });
+            } else {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Ödeme Başarılı!',
+                    text: 'Ödeme başarılı bir şekilde tamamlandı.',
+                });
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,15 +1,66 @@
-﻿@{
+﻿@model Iyzico_SanalPos.Models.PayViewModel
+@{
     Layout = null;
 }
 
 <!DOCTYPE html>
-
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
-    <title>Index</title>
+    <title>Pay</title>
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 </head>
 <body>
-    <a class="btn btn-success" href="/Payments/Pay">Öde</a>
+
+    <div id="payment-container">
+        <!-- 3D Secure HTML içeriği burada yüklenecek -->
+        <div id="payment-frame"></div>
+    </div>
+
+    <!-- AJAX işlemi başlatılacak buton -->
+    <button id="start-payment">Ödeme Başlat</button>
+
+    <!-- AJAX ile ödeme işlemi ve hata yönetimi -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+
+        $(document).ready(function () {
+            // Ödeme başlatma fonksiyonu
+            $('#start-payment').click(function () {
+                startPayment(); // Butona tıklandığında ödeme başlatma fonksiyonunu çağır
+            });
+            function startPayment() {
+            $.ajax({
+                url: '@Url.Action("Pay", "Payments")', // Ödeme başlatma endpoint'i
+                type: 'GET',
+                success: function (response) {
+                    // 3D Secure HTML içeriğini alıyoruz
+                    if (response.htmlContent) {
+                        $('#payment-frame').html(response.htmlContent); // Iyzico'dan gelen HTML içeriği burada yüklenecek
+                    }
+
+                    // Eğer hata varsa swal ile gösteriyoruz
+                    if (response.error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Hata!',
+                            text: response.errorMessage,
+                        });
+                    }
+                },
+                error: function (xhr, status, error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Sunucu Hatası!',
+                        text: 'Bir hata oluştu, lütfen tekrar deneyin.',
+                    });
+                }
+            });
+        }
+                });
+    </script>
 </body>
 </html>

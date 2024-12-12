@@ -1,0 +1,18 @@
+﻿@model Iyzipay.Model.ThreedsPayment
+@{
+    ViewData["Title"] = "Ödeme Sonucu";
+}
+
+<h2>Ödeme Sonucu</h2>
+
+<p>@ViewData["Message"]</p>
+
+@if (Model != null)
+{
+    <div>
+        <h3>Ödeme Detayları:</h3>
+        <p>Durum: @Model.Status</p>
+        <p>Konuşma ID: @Model.ConversationId</p>
+        <p>Ödenen Tutar: @Model.PaidPrice</p>
+    </div>
+}
