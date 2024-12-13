@@ -1,4 +1,5 @@
 ﻿using Iyzico_SanalPos.Models;
+using Iyzico_SanalPos.Models.PaymentModels;
 using Iyzipay;
 using Iyzipay.Model;
 using Iyzipay.Request;
@@ -12,8 +13,8 @@ public class PaymentsController : Controller
     {
         return View();
     }
-    [HttpGet]
-    public async Task<IActionResult> Pay()
+    [HttpPost]
+    public async Task<IActionResult> Pay(PaymentRequestModel model)
     {
         Options options = new()
         {
@@ -34,17 +35,17 @@ public class PaymentsController : Controller
             BasketId = "B67832",
             PaymentChannel = PaymentChannel.WEB.ToString(),
             PaymentGroup = PaymentGroup.PRODUCT.ToString(),
-            CallbackUrl = Url.Action("PayCallBack", "Payments", null, Request.Scheme) // MVC için Callback URL
+            CallbackUrl = Url.Action("PayCallBack", "Payments", null, Request.Scheme)
         };
 
         // Payment card info
         PaymentCard paymentCard = new PaymentCard
         {
-            CardHolderName = "John Doe",
-            CardNumber = "5528790000000008",
-            ExpireMonth = "12",
-            ExpireYear = "2030",
-            Cvc = "123",
+            CardHolderName = model.PaymentCard.CardHolderName,
+            CardNumber = model.PaymentCard.CardNumber,
+            ExpireMonth = model.PaymentCard.ExpireMonth,
+            ExpireYear = model.PaymentCard.ExpireYear,
+            Cvc = model.PaymentCard.Cvc,
             RegisterCard = 0
         };
         request.PaymentCard = paymentCard;
@@ -52,23 +53,22 @@ public class PaymentsController : Controller
         // Buyer info
         Buyer buyer = new Buyer
         {
-            Id = "BY789",
-            Name = "John",
-            Surname = "Doe",
-            GsmNumber = "+905350000000",
-            Email = "email@email.com",
-            IdentityNumber = "74300864791",
-            LastLoginDate = "2015-10-05 12:43:35",
-            RegistrationDate = "2013-04-21 15:12:09",
-            RegistrationAddress = "Nidakule Göztepe, Merdivenköy Mah. Bora Sok. No:1",
-            Ip = "85.34.78.112",
-            City = "Istanbul",
-            Country = "Turkey",
-            ZipCode = "34732"
+            Id = Guid.NewGuid().ToString(),
+            Name = model.Buyer.Name,
+            Surname = model.Buyer.Surname,
+            GsmNumber = model.Buyer.GsmNumber,
+            Email = model.Buyer.Email,
+            IdentityNumber = "33131",
+            LastLoginDate = DateTime.Now.ToString(),
+            RegistrationDate = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss"),
+            RegistrationAddress = model.Buyer.City,
+            //Ip = model.Buyer.Ip,
+            City = model.Buyer.City,
+            Country = model.Buyer.Country,
+            ZipCode = model.Buyer.ZipCode
         };
         request.Buyer = buyer;
 
-        // Shipping and billing addresses
         Address shippingAddress = new Address
         {
             ContactName = "Jane Doe",
@@ -90,37 +90,20 @@ public class PaymentsController : Controller
         request.BillingAddress = billingAddress;
 
         // Basket items
+      
+        // Basket items
         List<BasketItem> basketItems = new List<BasketItem>
         {
-            new BasketItem
-            {
-                Id = "BI101",
-                Name = "Binocular",
-                Category1 = "Collectibles",
-                Category2 = "Accessories",
-                ItemType = BasketItemType.PHYSICAL.ToString(),
-                Price = "0.3"
-            },
-            new BasketItem
-            {
-                Id = "BI102",
-                Name = "Game code",
-                Category1 = "Game",
-                Category2 = "Online Game Items",
-                ItemType = BasketItemType.VIRTUAL.ToString(),
-                Price = "0.5"
-            },
-            new BasketItem
-            {
-                Id = "BI103",
-                Name = "Usb",
-                Category1 = "Electronics",
-                Category2 = "Usb / Cable",
-                ItemType = BasketItemType.PHYSICAL.ToString(),
-                Price = "0.2"
-            }
+         new BasketItem
+         {
+             Id = "BI101",
+             Name = "Binocular",
+             Category1 = "Collectibles",
+             Category2 = "Accessories",
+             ItemType = BasketItemType.PHYSICAL.ToString(),
+             Price = "0.3"
+         }
         };
-        request.BasketItems = basketItems;
 
         // Initialize 3D Secure payment
         ThreedsInitialize threedsInitialize = await ThreedsInitialize.Create(request, options);
@@ -164,6 +147,11 @@ public class PaymentsController : Controller
         return View(callbackData); // Hata veya başarılı sonucu View'a gönder
     }
 
+    [HttpGet]
+    public IActionResult PaymentForm()
+    {
+        return View();
+    }
 
 }
 

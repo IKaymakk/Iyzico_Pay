@@ -14,14 +14,11 @@
 <body>
 
     <div id="payment-container">
-        <!-- 3D Secure HTML içeriği burada yüklenecek -->
         <div id="payment-frame"></div>
     </div>
 
-    <!-- AJAX işlemi başlatılacak buton -->
     <button id="start-payment">Ödeme Başlat</button>
 
-    <!-- AJAX ile ödeme işlemi ve hata yönetimi -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -33,34 +30,34 @@
                 startPayment(); // Butona tıklandığında ödeme başlatma fonksiyonunu çağır
             });
             function startPayment() {
-            $.ajax({
-                url: '@Url.Action("Pay", "Payments")', // Ödeme başlatma endpoint'i
-                type: 'GET',
-                success: function (response) {
-                    // 3D Secure HTML içeriğini alıyoruz
-                    if (response.htmlContent) {
-                        $('#payment-frame').html(response.htmlContent); // Iyzico'dan gelen HTML içeriği burada yüklenecek
-                    }
+                $.ajax({
+                    url: '@Url.Action("Pay", "Payments")', // Ödeme başlatma endpoint'i
+                    type: 'GET',
+                    success: function (response) {
+                        // 3D Secure HTML içeriğini alıyoruz
+                        if (response.htmlContent) {
+                            $('#payment-frame').html(response.htmlContent); // Iyzico'dan gelen HTML içeriği burada yüklenecek
+                        }
 
-                    // Eğer hata varsa swal ile gösteriyoruz
-                    if (response.error) {
+                        // Eğer hata varsa swal ile gösteriyoruz
+                        if (response.error) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Hata!',
+                                text: response.errorMessage,
+                            });
+                        }
+                    },
+                    error: function (xhr, status, error) {
                         Swal.fire({
                             icon: 'error',
-                            title: 'Hata!',
-                            text: response.errorMessage,
+                            title: 'Sunucu Hatası!',
+                            text: 'Bir hata oluştu, lütfen tekrar deneyin.',
                         });
                     }
-                },
-                error: function (xhr, status, error) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Sunucu Hatası!',
-                        text: 'Bir hata oluştu, lütfen tekrar deneyin.',
-                    });
-                }
-            });
-        }
                 });
+            }
+        });
     </script>
 </body>
 </html>
