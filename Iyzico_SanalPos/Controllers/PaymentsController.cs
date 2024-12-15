@@ -59,10 +59,9 @@ public class PaymentsController : Controller
             GsmNumber = model.Buyer.GsmNumber,
             Email = model.Buyer.Email,
             IdentityNumber = "33131",
-            LastLoginDate = DateTime.Now.ToString(),
-            RegistrationDate = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss"),
+            LastLoginDate = "2015-10-05 12:43:35",
+            RegistrationDate = "2013-04-21 15:12:09",
             RegistrationAddress = model.Buyer.City,
-            //Ip = model.Buyer.Ip,
             City = model.Buyer.City,
             Country = model.Buyer.Country,
             ZipCode = model.Buyer.ZipCode
@@ -90,25 +89,22 @@ public class PaymentsController : Controller
         request.BillingAddress = billingAddress;
 
         // Basket items
-      
-        // Basket items
         List<BasketItem> basketItems = new List<BasketItem>
+    {
+        new BasketItem
         {
-         new BasketItem
-         {
-             Id = "BI101",
-             Name = "Binocular",
-             Category1 = "Collectibles",
-             Category2 = "Accessories",
-             ItemType = BasketItemType.PHYSICAL.ToString(),
-             Price = "0.3"
-         }
-        };
+            Id = "BI101",
+            Name = "Binocular",
+            Category1 = "Collectibles",
+            Category2 = "Accessories",
+            ItemType = BasketItemType.PHYSICAL.ToString(),
+            Price = "1"
+        }
+    };
+        request.BasketItems = basketItems;
 
-        // Initialize 3D Secure payment
         ThreedsInitialize threedsInitialize = await ThreedsInitialize.Create(request, options);
 
-        // If the payment initialization fails
         if (threedsInitialize.Status != "success")
         {
             return Json(new
@@ -118,7 +114,6 @@ public class PaymentsController : Controller
             });
         }
 
-        // Return the HTML content for 3D Secure
         return Json(new
         {
             htmlContent = threedsInitialize.HtmlContent,
